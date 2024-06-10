@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Policy Tracker App</title>
+        <link type="text/css" rel="stylesheet" href="app.css"  />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+    </head>
+    <body>
+        <header>
+            <div id="upper-header">
+                <div id="logo">
+                    <img alt="leadway-logo" src="./images/leadway_black_logo.png" id="logo-img"/>
+                </div>
+                <div id="left-block">
+                    <div id="app-title">
+                        <h3>Policy Tracker App</h3>
+                    </div>
+                    <div id="search-block">
+                        <div id="main-search-box">
+                            <input type="search" placeholder="Search by Policy Number or Client Name"/>
+                            <button id="search-btn"><i class="fa fa-search fa-2x" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="lower-header">
+                <div class="tab-item" name="register">Register Policy</div>
+                <div class="tab-item" name="all-policies">All Policies</div>
+                <div class="tab-item" name="this-month">This Month</div>
+                <div class="tab-item" name="next-month">Next Month</div>
+                <div class="tab-item" name="2-months-time">2-Months-Time</div>
+                <div class="tab-item" name="3-months-time">3-Months-Time</div>
+            </div>
+        </header>
+        <div id="current-content"></div>
+        <script type="text/javascript" src="PolicyStorage.js"></script>
+        <script type="text/javascript" src="app.js"></script>
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+              apiKey: "AIzaSyBflTqV_h9kSc6wULkBd1BtbKqTniQGGlQ",
+              authDomain: "policy-tracker-lac-kad.firebaseapp.com",
+              projectId: "policy-tracker-lac-kad",
+              storageBucket: "policy-tracker-lac-kad.appspot.com",
+              messagingSenderId: "675419575485",
+              appId: "1:675419575485:web:a744a4adfeed8a633913d4",
+              measurementId: "G-GER16PRXMS"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+          </script>
+          <footer>
+            <p>Policy Tracker App by Isenewo Oluwaseyi</p>
+            <p>All rights reserved &copy; 2024</p>
+          </footer>
+    </body>
+</html>
