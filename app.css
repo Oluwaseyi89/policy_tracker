@@ -259,6 +259,11 @@ header {
     cursor: pointer;
 }
 
+/* #policy-save-btn:hover {
+    background-color: orangered;
+    transition: 1s;
+} */
+
 
 .policy-item {
     height: 200px;

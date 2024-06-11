@@ -68,82 +68,67 @@ let threeMonthsTime = `
     <h3>These are all the policies due for renewal in 3 months time</h3>
 `;
 
-let registerClicked = false;
-let allPoliciesClicked = false;
-let thisMonthClicked = false;
-let nextMonthClicked = false;
-let twoMonthClicked = false;
-let threeMonthClicked = false;
+
+function updateTabs () {
+    Array.from(tabItems).forEach(tabItem => {
+        if (tabItem.getAttribute("data-state") == "true") {
+            tabItem.style.backgroundColor = 'orangered';
+            tabItem.style.border = 'solid 1px orangered';
+            tabItem.style.color = 'white';
+        } else {
+            // alert(tabItem.getAttribute("data-state"));
+            tabItem.style.backgroundColor = 'white';
+            tabItem.style.border = 'solid 2px orange';
+            tabItem.style.borderLeft = 'solid 1px orange';
+            tabItem.style.color = 'orange';
+        }
+    });
+}
+
+
+
+
+
 
 
 Array.from(tabItems).forEach(tabItem => {
     let tabContent = tabItem.innerHTML;
 
     tabItem.addEventListener('click', () => {
+
+        tabItem.setAttribute("data-state", "true");
+        updateTabs();
+
         switch(tabContent) {
             case 'Register Policy': currentContent.innerHTML = policyForm;
-                registerClicked = true;
-                allPoliciesClicked = false;
-                thisMonthClicked = false;
-                nextMonthClicked = false;
-                twoMonthClicked = false;
-                threeMonthClicked = false;
-            tabItem.style.backgroundColor = registerClicked ? 'orangered' : 'white';
-            tabItem.style.color = registerClicked ? 'white' : 'orange';
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
             break;
             case 'All Policies': renderAllPolicies();
-            registerClicked = false;
-            allPoliciesClicked = true;
-            thisMonthClicked = false;
-            nextMonthClicked = false;
-            twoMonthClicked = false;
-            threeMonthClicked = false;
-            tabItem.style.backgroundColor = allPoliciesClicked ? 'orangered': 'white';
-            tabItem.style.color = allPoliciesClicked ? 'white' : 'orange';
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
             break;
-            case 'This Month': currentContent.innerHTML = thisMonth;
-            registerClicked = false;
-            allPoliciesClicked = false;
-            thisMonthClicked = true;
-            nextMonthClicked = false;
-            twoMonthClicked = false;
-            threeMonthClicked = false;
-            tabItem.style.backgroundColor = thisMonthClicked ? 'orangered' : 'white';
-            tabItem.style.color = thisMonthClicked ? 'white' : 'orange';
+            case 'This Month': renderThisMonthPolicies();
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
             break;
-            case 'Next Month': currentContent.innerHTML = nextMonth;
-            registerClicked = false;
-            allPoliciesClicked = false;
-            thisMonthClicked = false;
-            nextMonthClicked = true;
-            twoMonthClicked = false;
-            threeMonthClicked = false;
-            tabItem.style.backgroundColor = nextMonthClicked ? 'orangered' : 'white';
-            tabItem.style.color = nextMonthClicked ? 'white' : 'orange';
+            case 'Next Month': renderNextMonthPolicies();
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
             break;
-            case '2-Months-Time': currentContent.innerHTML = twoMonthsTime;
-            registerClicked = false;
-            allPoliciesClicked = false;
-            thisMonthClicked = false;
-            nextMonthClicked = false;
-            twoMonthClicked = true;
-            threeMonthClicked = false;
-            tabItem.style.backgroundColor = twoMonthClicked ? 'orangered' : 'white';
-            tabItem.style.color = twoMonthClicked ? 'white' : 'orange';
+            case '2-Months-Time': renderTwoMonthsTimePolicies();
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
             break;
-            case '3-Months-Time': currentContent.innerHTML = threeMonthsTime;
-            registerClicked = false;
-            allPoliciesClicked = false;
-            thisMonthClicked = false;
-            nextMonthClicked = false;
-            twoMonthClicked = false;
-            threeMonthClicked = true;
-            tabItem.style.backgroundColor = threeMonthClicked ? 'orangered' : 'white';
-            tabItem.style.color = threeMonthClicked ? 'white' : 'orange';
+            case '3-Months-Time': renderThreeMonthsTimePolicies();
+            tabItem.setAttribute("data-state", "true");
+            updateTabs();
+            
             break;
             default: currentContent.innerHTML = policyForm;
-            tabItem.style.backgroundColor = 'white';
-            tabItem.style.color = 'orange';
+            tabItem.setAttribute("data-state", "false");
+            updateTabs();
+            
         }
     });
 });
@@ -196,6 +181,19 @@ let policyToSave = {
 });
 
 
+submitPolicyBtn.addEventListener('mouseenter', () => {
+    submitPolicyBtn.style.backgroundColor = 'orangered';
+    submitPolicyBtn.style.transition = '0.7s';
+    
+});
+
+submitPolicyBtn.addEventListener('mouseleave', () => {
+    submitPolicyBtn.style.backgroundColor = 'orange';
+    submitPolicyBtn.style.transition = '0.7s';
+
+});
+
+
 
 function renderAllPolicies () {
     let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
@@ -214,6 +212,206 @@ function renderAllPolicies () {
         renderContainer.style.alignItems = 'flex-start';
         renderContainer.style.zIndex = '-1';
         let sortedPolicies = retrievedPolicies.policies.sort((a, b) => {
+            let nameA = a.holder_name.toLowerCase();
+            let nameB = b.holder_name.toLowerCase();
+            if(nameA < nameB) return -1;
+            if(nameA > nameB) return 1;
+            return 0;
+        });
+        sortedPolicies.forEach(item => {
+            renderContainer.innerHTML += `<div class='policy-item'>
+            <p><strong>Policy Holder</strong>: ${item.holder_name}</p>                
+            <p><strong>Policy Number</strong>: ${item.policy_number}</p>                
+            <p><strong>Policy Class</strong>: ${item.policy_class}</p>                
+            <p><strong>Policy Sub-Class</strong>: ${item.policy_sub_class}</p>                
+            <p><strong>Policy Date</strong>: ${item.policy_date}</p>                
+            <p><strong>Premium Paid</strong>: NGN ${item.premium_paid}</p>                
+            </div>`;
+        });
+
+        currentContent.appendChild(renderContainer);
+    } else return "";
+
+}
+
+function renderThisMonthPolicies () {
+    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+
+    let dateObj = new Date().toISOString();
+
+    let justDate = dateObj.split("T")[0];
+    let thisMonthD = justDate.split("-")[1];
+
+    
+
+    let renderContainer = document.createElement("div");
+
+    if(retrievedPolicies !== null) {
+        currentContent.innerHTML = "";
+        renderContainer.style.paddingTop = '30px';
+        renderContainer.style.paddingLeft = '30px';
+        renderContainer.style.paddingRight = '30px';
+        renderContainer.style.display = 'flex';
+        renderContainer.style.flexDirection = 'row';
+        renderContainer.style.flexWrap = 'wrap';
+        renderContainer.style.justifyContent = 'space-between';
+        renderContainer.style.alignItems = 'flex-start';
+        renderContainer.style.zIndex = '-1';
+        let thisMonthPolicies = retrievedPolicies.policies.filter(item => item.policy_date.split("-")[1] == thisMonthD);
+        let sortedPolicies = thisMonthPolicies.sort((a, b) => {
+            let nameA = a.holder_name.toLowerCase();
+            let nameB = b.holder_name.toLowerCase();
+            if(nameA < nameB) return -1;
+            if(nameA > nameB) return 1;
+            return 0;
+        });
+        sortedPolicies.forEach(item => {
+            renderContainer.innerHTML += `<div class='policy-item'>
+            <p><strong>Policy Holder</strong>: ${item.holder_name}</p>                
+            <p><strong>Policy Number</strong>: ${item.policy_number}</p>                
+            <p><strong>Policy Class</strong>: ${item.policy_class}</p>                
+            <p><strong>Policy Sub-Class</strong>: ${item.policy_sub_class}</p>                
+            <p><strong>Policy Date</strong>: ${item.policy_date}</p>                
+            <p><strong>Premium Paid</strong>: NGN ${item.premium_paid}</p>                
+            </div>`;
+        });
+
+        currentContent.appendChild(renderContainer);
+    } else return "";
+
+}
+
+
+function renderNextMonthPolicies () {
+    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+
+    let dateObj = new Date().toISOString();
+
+    let justDate = dateObj.split("T")[0];
+    let thisMonthD = justDate.split("-")[1];
+    let thisMonthInt = parseInt(thisMonthD);
+    let nextMonthInt = thisMonthInt <= 11 ? (thisMonthInt + 1) : 1;
+    let nextMonthD = nextMonthInt < 10 ? ("0" + nextMonthInt) : nextMonthInt.toString();
+
+    
+
+    let renderContainer = document.createElement("div");
+
+    if(retrievedPolicies !== null) {
+        currentContent.innerHTML = "";
+        renderContainer.style.paddingTop = '30px';
+        renderContainer.style.paddingLeft = '30px';
+        renderContainer.style.paddingRight = '30px';
+        renderContainer.style.display = 'flex';
+        renderContainer.style.flexDirection = 'row';
+        renderContainer.style.flexWrap = 'wrap';
+        renderContainer.style.justifyContent = 'space-between';
+        renderContainer.style.alignItems = 'flex-start';
+        renderContainer.style.zIndex = '-1';
+        let nextMonthPolicies = retrievedPolicies.policies.filter(item => item.policy_date.split("-")[1] == nextMonthD);
+        let sortedPolicies = nextMonthPolicies.sort((a, b) => {
+            let nameA = a.holder_name.toLowerCase();
+            let nameB = b.holder_name.toLowerCase();
+            if(nameA < nameB) return -1;
+            if(nameA > nameB) return 1;
+            return 0;
+        });
+        sortedPolicies.forEach(item => {
+            renderContainer.innerHTML += `<div class='policy-item'>
+            <p><strong>Policy Holder</strong>: ${item.holder_name}</p>                
+            <p><strong>Policy Number</strong>: ${item.policy_number}</p>                
+            <p><strong>Policy Class</strong>: ${item.policy_class}</p>                
+            <p><strong>Policy Sub-Class</strong>: ${item.policy_sub_class}</p>                
+            <p><strong>Policy Date</strong>: ${item.policy_date}</p>                
+            <p><strong>Premium Paid</strong>: NGN ${item.premium_paid}</p>                
+            </div>`;
+        });
+
+        currentContent.appendChild(renderContainer);
+    } else return "";
+
+}
+
+
+function renderTwoMonthsTimePolicies () {
+    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+
+    let dateObj = new Date().toISOString();
+
+    let justDate = dateObj.split("T")[0];
+    let thisMonthD = justDate.split("-")[1];
+    let thisMonthInt = parseInt(thisMonthD);
+    let twoMonthInt = thisMonthInt <= 10 ? (thisMonthInt + 2) : (thisMonthInt == 11 ? 1 : 2);
+    let twoMonthD = twoMonthInt < 10 ? ("0" + twoMonthInt) : twoMonthInt.toString();
+
+    
+
+    let renderContainer = document.createElement("div");
+
+    if(retrievedPolicies !== null) {
+        currentContent.innerHTML = "";
+        renderContainer.style.paddingTop = '30px';
+        renderContainer.style.paddingLeft = '30px';
+        renderContainer.style.paddingRight = '30px';
+        renderContainer.style.display = 'flex';
+        renderContainer.style.flexDirection = 'row';
+        renderContainer.style.flexWrap = 'wrap';
+        renderContainer.style.justifyContent = 'space-between';
+        renderContainer.style.alignItems = 'flex-start';
+        renderContainer.style.zIndex = '-1';
+        let twoMonthPolicies = retrievedPolicies.policies.filter(item => item.policy_date.split("-")[1] == twoMonthD);
+        let sortedPolicies = twoMonthPolicies.sort((a, b) => {
+            let nameA = a.holder_name.toLowerCase();
+            let nameB = b.holder_name.toLowerCase();
+            if(nameA < nameB) return -1;
+            if(nameA > nameB) return 1;
+            return 0;
+        });
+        sortedPolicies.forEach(item => {
+            renderContainer.innerHTML += `<div class='policy-item'>
+            <p><strong>Policy Holder</strong>: ${item.holder_name}</p>                
+            <p><strong>Policy Number</strong>: ${item.policy_number}</p>                
+            <p><strong>Policy Class</strong>: ${item.policy_class}</p>                
+            <p><strong>Policy Sub-Class</strong>: ${item.policy_sub_class}</p>                
+            <p><strong>Policy Date</strong>: ${item.policy_date}</p>                
+            <p><strong>Premium Paid</strong>: NGN ${item.premium_paid}</p>                
+            </div>`;
+        });
+
+        currentContent.appendChild(renderContainer);
+    } else return "";
+
+}
+
+
+function renderThreeMonthsTimePolicies () {
+    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+
+    let dateObj = new Date().toISOString();
+
+    let justDate = dateObj.split("T")[0];
+    let thisMonthD = justDate.split("-")[1];
+    let thisMonthInt = parseInt(thisMonthD);
+    let threeMonthInt = thisMonthInt <= 9 ? (thisMonthInt + 3) : (thisMonthInt == 10 ? 1 : (thisMonthInt == 11 ? 2 : 3));
+    let threeMonthD = threeMonthInt < 10 ? ("0" + threeMonthInt) : threeMonthInt.toString();
+
+    
+
+    let renderContainer = document.createElement("div");
+
+    if(retrievedPolicies !== null) {
+        currentContent.innerHTML = "";
+        renderContainer.style.paddingTop = '30px';
+        renderContainer.style.paddingLeft = '30px';
+        renderContainer.style.paddingRight = '30px';
+        renderContainer.style.display = 'flex';
+        renderContainer.style.flexDirection = 'row';
+        renderContainer.style.flexWrap = 'wrap';
+        renderContainer.style.justifyContent = 'space-between';
+        renderContainer.style.alignItems = 'flex-start';
+        renderContainer.style.zIndex = '-1';
+        let threeMonthPolicies = retrievedPolicies.policies.filter(item => item.policy_date.split("-")[1] == threeMonthD);
+        let sortedPolicies = threeMonthPolicies.sort((a, b) => {
             let nameA = a.holder_name.toLowerCase();
             let nameB = b.holder_name.toLowerCase();
             if(nameA < nameB) return -1;
