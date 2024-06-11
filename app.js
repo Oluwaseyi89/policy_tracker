@@ -174,7 +174,7 @@ let policyToSave = {
                 } else if(res.status === "error") {
                     showAlertView(true, "Error!", res.data);
             }           
-        }).catch(err => alert(err.message));
+        }).catch(err => showAlertView(true, "Error!", err.message));
     } else {
         showAlertView(true, "Incomplete Data!", "Fill all available fields!");
     }
