@@ -4,8 +4,14 @@
         <title>Policy Tracker App</title>
         <link type="text/css" rel="stylesheet" href="app.css"  />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script> -->  
+      
     </head>
     <body>
+        <input type="hidden" id="auth" />
         <header>
             <div id="upper-header">
                 <div id="logo">
@@ -33,6 +39,48 @@
             </div>
         </header>
         <div id="current-content"></div>
+        <script type="text/javascript" src="firebaseSetting.js"></script> 
+        <script type="module">
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'
+
+            
+            // If you enabled Analytics in your project, add the Firebase SDK for Google Analytics
+            import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js'
+            
+            // Add Firebase products that you want to use
+            import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'
+            import { getFirestore, collection, addDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'
+            
+            const firebaseApp = initializeApp({
+                apiKey: SETTINGS.apiKey,
+                authDomain: SETTINGS.authDomain,
+                projectId: SETTINGS.projectId,
+                storageBucket: SETTINGS.storageBucket,
+                messagingSenderId: SETTINGS.messagingSenderId,
+                appId: SETTINGS.appId,
+                measurementId: SETTINGS.measurementId
+                });
+
+                let store = getFirestore();
+                let auth = getAuth();
+
+                console.log(firebaseApp);
+                console.log(store);
+                console.log(auth);
+                console.log(collection);
+                console.log(addDoc);
+                console.log(doc);
+                console.log(signInWithEmailAndPassword);
+                console.log(createUserWithEmailAndPassword);
+                console.log(SETTINGS.apiKey);
+                
+          </script>
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script> -->
         <script type="text/javascript" src="PolicyStorage.js"></script>
         <script type="text/javascript" src="app.js"></script>
        

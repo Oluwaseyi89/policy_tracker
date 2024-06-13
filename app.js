@@ -477,3 +477,5 @@ function showAlertView(shouldShow, title, message) {
         }
 }
 
+const app = initializeApp();
+
