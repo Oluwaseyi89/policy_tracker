@@ -7,7 +7,7 @@
         <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
         <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script>
         <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script> -->  
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>  -->
       
     </head>
     <body>
@@ -40,6 +40,14 @@
         </header>
         <div id="current-content"></div>
         <script type="text/javascript" src="firebaseSetting.js"></script> 
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script> -->
+        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script> -->
+        <script type="text/javascript" src="PolicyStorage.js"></script>
+        <script type="text/javascript" src="app.js"></script>       
         <script type="module">
             import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'
 
@@ -49,7 +57,7 @@
             
             // Add Firebase products that you want to use
             import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'
-            import { getFirestore, collection, addDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'
+            import { getFirestore, collection, addDoc, doc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'
             
             const firebaseApp = initializeApp({
                 apiKey: SETTINGS.apiKey,
@@ -64,26 +72,67 @@
                 let store = getFirestore();
                 let auth = getAuth();
 
-                console.log(firebaseApp);
-                console.log(store);
-                console.log(auth);
-                console.log(collection);
-                console.log(addDoc);
-                console.log(doc);
-                console.log(signInWithEmailAndPassword);
-                console.log(createUserWithEmailAndPassword);
-                console.log(SETTINGS.apiKey);
+                const collectionRef = collection(store, 'policies');
+
+                let submitPolicyBtn = document.getElementById('policy-save-btn');
+
+
+                submitPolicyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    let holderName = document.getElementById('holder-name');
+                let policyNumber = document.getElementById('policy-number');
+                let clientType = document.getElementById('client-type');
+                let policyDate = document.getElementById('policy-date');
+                let policyClass = document.getElementById('policy-class');
+                let policySubClass = document.getElementById('policy-sub-class');
+                let paymentMode = document.getElementById('payment-mode');
+                let premiumPaid = document.getElementById('premium-paid');
+
+let policyToSave = {
+    "holder_name": holderName.value,
+    "policy_number": policyNumber.value,
+    "client_type": clientType.value,
+    "policy_date": policyDate.value,
+    "policy_class": policyClass.value,
+    "policy_sub_class": policySubClass.value,
+    "payment_mode": paymentMode.value,
+    "premium_paid": premiumPaid.value
+}
+
+    if(holderName.value && policyNumber.value && clientType.value && policyDate.value && policyClass.value && policySubClass.value && paymentMode.value && premiumPaid.value) {
+
+        console.log(policyToSave);
+        addDoc(collectionRef, {...policyToSave}).then(() => showAlertView(true, "Success", "Policy successfully saved!")).catch(err => showAlertView(true, "Error!", err.message));
+    } else {
+        showAlertView(true, "Incomplete Data!", "Fill all available fields!");
+    }
+});
+
+submitPolicyBtn.addEventListener('mouseenter', () => {
+        submitPolicyBtn.style.backgroundColor = 'orangered';
+        submitPolicyBtn.style.transition = '0.7s';
+        
+     });
+    
+  submitPolicyBtn.addEventListener('mouseleave', () => {
+  submitPolicyBtn.style.backgroundColor = 'orange';
+       submitPolicyBtn.style.transition = '0.7s';
+   
+    });
+    
+    getDocs(collectionRef).then(data => {
+     let fetchedPolicies = data.docs.map(item => {
+         return {...item.data(), id: item.id}
+      });
+
+      localStorage.setItem("firebase_policies", JSON.stringify({"policies": fetchedPolicies}));
+ }).catch(err => showAlertView(true, "Error!", err.message));
+
+
+                useFirebaseApi(firebaseApp, auth, store, collection, doc, addDoc, signInWithEmailAndPassword, createUserWithEmailAndPassword, getDocs);
                 
           </script>
-        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script> -->
-        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-        <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script> -->
-        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script> -->
-        <!-- <script type="module" src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script> -->
-        <script type="text/javascript" src="PolicyStorage.js"></script>
-        <script type="text/javascript" src="app.js"></script>
-       
           <footer>
             <p>Policy Tracker App by Isenewo Oluwaseyi</p>
             <p>All rights reserved &copy; 2024</p>

@@ -1,5 +1,16 @@
 // import { PolicyStorage } from "./PolicyStorage";
 
+let firebaseApp;
+let storeV;
+let auth;
+let collection;
+let addDoc;
+let doc;
+let signInWithEmailAndPassword;
+let createUserWithEmailAndPassword;
+
+
+
 
 const currentContent = document.getElementById('current-content');
 let tabItems = document.getElementsByClassName('tab-item');
@@ -138,65 +149,69 @@ Array.from(tabItems).forEach(tabItem => {
 
 currentContent.innerHTML = policyForm;
 
-let submitPolicyBtn = document.getElementById('policy-save-btn');
+// let submitPolicyBtn = document.getElementById('policy-save-btn');
 
 
-submitPolicyBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+// submitPolicyBtn.addEventListener('click', (e) => {
+//     e.preventDefault();
 
-    let holderName = document.getElementById('holder-name');
-let policyNumber = document.getElementById('policy-number');
-let clientType = document.getElementById('client-type');
-let policyDate = document.getElementById('policy-date');
-let policyClass = document.getElementById('policy-class');
-let policySubClass = document.getElementById('policy-sub-class');
-let paymentMode = document.getElementById('payment-mode');
-let premiumPaid = document.getElementById('premium-paid');
+//     let holderName = document.getElementById('holder-name');
+// let policyNumber = document.getElementById('policy-number');
+// let clientType = document.getElementById('client-type');
+// let policyDate = document.getElementById('policy-date');
+// let policyClass = document.getElementById('policy-class');
+// let policySubClass = document.getElementById('policy-sub-class');
+// let paymentMode = document.getElementById('payment-mode');
+// let premiumPaid = document.getElementById('premium-paid');
 
-let policyToSave = {
-    "id": "",
-    "holder_name": holderName.value,
-    "policy_number": policyNumber.value,
-    "client_type": clientType.value,
-    "policy_date": policyDate.value,
-    "policy_class": policyClass.value,
-    "policy_sub_class": policySubClass.value,
-    "payment_mode": paymentMode.value,
-    "premium_paid": premiumPaid.value
-}
+// let policyToSave = {
+//     "id": "",
+//     "holder_name": holderName.value,
+//     "policy_number": policyNumber.value,
+//     "client_type": clientType.value,
+//     "policy_date": policyDate.value,
+//     "policy_class": policyClass.value,
+//     "policy_sub_class": policySubClass.value,
+//     "payment_mode": paymentMode.value,
+//     "premium_paid": premiumPaid.value
+// }
 
-    if(holderName.value && policyNumber.value && clientType.value && policyDate.value && policyClass.value && policySubClass.value && paymentMode.value && premiumPaid.value) {
+//     if(holderName.value && policyNumber.value && clientType.value && policyDate.value && policyClass.value && policySubClass.value && paymentMode.value && premiumPaid.value) {
 
-        console.log(policyToSave);
-        PolicyStorage.save(policyToSave).then(res => {
-            if(res.status === "success") {
-                showAlertView(true, "Success!", res.data);
-                } else if(res.status === "error") {
-                    showAlertView(true, "Error!", res.data);
-            }           
-        }).catch(err => showAlertView(true, "Error!", err.message));
-    } else {
-        showAlertView(true, "Incomplete Data!", "Fill all available fields!");
-    }
-});
+//         console.log(policyToSave);
+//         PolicyStorage.save(policyToSave).then(res => {
+//             if(res.status === "success") {
+//                 showAlertView(true, "Success!", res.data);
+//                 } else if(res.status === "error") {
+//                     showAlertView(true, "Error!", res.data);
+//             }           
+//         }).catch(err => showAlertView(true, "Error!", err.message));
+//     } else {
+//         showAlertView(true, "Incomplete Data!", "Fill all available fields!");
+//     }
+// });
 
 
-submitPolicyBtn.addEventListener('mouseenter', () => {
-    submitPolicyBtn.style.backgroundColor = 'orangered';
-    submitPolicyBtn.style.transition = '0.7s';
+// submitPolicyBtn.addEventListener('mouseenter', () => {
+//     submitPolicyBtn.style.backgroundColor = 'orangered';
+//     submitPolicyBtn.style.transition = '0.7s';
     
-});
+// });
 
-submitPolicyBtn.addEventListener('mouseleave', () => {
-    submitPolicyBtn.style.backgroundColor = 'orange';
-    submitPolicyBtn.style.transition = '0.7s';
+// submitPolicyBtn.addEventListener('mouseleave', () => {
+//     submitPolicyBtn.style.backgroundColor = 'orange';
+//     submitPolicyBtn.style.transition = '0.7s';
 
-});
+// });
 
 
 
 function renderAllPolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
+
+    alert(retrievedPolicies);
+    
 
     let renderContainer = document.createElement("div");
 
@@ -477,5 +492,33 @@ function showAlertView(shouldShow, title, message) {
         }
 }
 
-const app = initializeApp();
+function useFirebaseApi(firebaseApp, auth, store, collection, doc, addDoc, signInWithEmailAndPassword, createUserWithEmailAndPassword, getDocs) {
+   
+    const collectionRef = collection(store, 'policies');
+
+    storeV = store; 
+
+    let policyToSave = {
+        "holder_name": "Oluwaseyi",
+        "policy_number": "3435343",
+        "client_type": "Individual",
+        "policy_date": "2024-06-14",
+        "policy_class": "Fire",
+        "policy_sub_class": "Burglary",
+        "payment_mode": "Transfer",
+        "premium_paid": "1500000"
+    }
+
+    // addDoc(collectionRef, {...policyToSave}).then(() => alert("Data Added")).catch(err => alert(err.message));
+
+    getDocs(collectionRef).then(data => {
+        console.log(data.docs.map(item => {
+            return {...item.data(), id: item.id}
+         }));
+    }).catch(err => console.log(err.message));
+    
+}
+
+
+console.log(storeV);
 
