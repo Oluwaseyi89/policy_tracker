@@ -207,8 +207,8 @@ currentContent.innerHTML = policyForm;
 
 
 function renderAllPolicies () {
-    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
-    let retrievedPolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
+    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
     
 
     let renderContainer = document.createElement("div");
