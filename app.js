@@ -209,8 +209,6 @@ currentContent.innerHTML = policyForm;
 function renderAllPolicies () {
     // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
     let retrievedPolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
-
-    alert(retrievedPolicies);
     
 
     let renderContainer = document.createElement("div");
@@ -491,34 +489,3 @@ function showAlertView(shouldShow, title, message) {
 
         }
 }
-
-function useFirebaseApi(firebaseApp, auth, store, collection, doc, addDoc, signInWithEmailAndPassword, createUserWithEmailAndPassword, getDocs) {
-   
-    const collectionRef = collection(store, 'policies');
-
-    storeV = store; 
-
-    let policyToSave = {
-        "holder_name": "Oluwaseyi",
-        "policy_number": "3435343",
-        "client_type": "Individual",
-        "policy_date": "2024-06-14",
-        "policy_class": "Fire",
-        "policy_sub_class": "Burglary",
-        "payment_mode": "Transfer",
-        "premium_paid": "1500000"
-    }
-
-    // addDoc(collectionRef, {...policyToSave}).then(() => alert("Data Added")).catch(err => alert(err.message));
-
-    getDocs(collectionRef).then(data => {
-        console.log(data.docs.map(item => {
-            return {...item.data(), id: item.id}
-         }));
-    }).catch(err => console.log(err.message));
-    
-}
-
-
-console.log(storeV);
-

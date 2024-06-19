@@ -109,29 +109,26 @@ let policyToSave = {
     }
 });
 
-submitPolicyBtn.addEventListener('mouseenter', () => {
+    submitPolicyBtn.addEventListener('mouseenter', () => {
         submitPolicyBtn.style.backgroundColor = 'orangered';
         submitPolicyBtn.style.transition = '0.7s';
         
      });
     
-  submitPolicyBtn.addEventListener('mouseleave', () => {
-  submitPolicyBtn.style.backgroundColor = 'orange';
-       submitPolicyBtn.style.transition = '0.7s';
+    submitPolicyBtn.addEventListener('mouseleave', () => {
+        submitPolicyBtn.style.backgroundColor = 'orange';
+        submitPolicyBtn.style.transition = '0.7s';
    
     });
     
     getDocs(collectionRef).then(data => {
-     let fetchedPolicies = data.docs.map(item => {
-         return {...item.data(), id: item.id}
-      });
+            let fetchedPolicies = data.docs.map(item => {
+                return {...item.data(), id: item.id}
+            });
 
-      localStorage.setItem("firebase_policies", JSON.stringify({"policies": fetchedPolicies}));
- }).catch(err => showAlertView(true, "Error!", err.message));
+            localStorage.setItem("firebase_policies", JSON.stringify({"policies": fetchedPolicies}));
+    }).catch(err => showAlertView(true, "Error!", err.message));
 
-
-                useFirebaseApi(firebaseApp, auth, store, collection, doc, addDoc, signInWithEmailAndPassword, createUserWithEmailAndPassword, getDocs);
-                
           </script>
           <footer>
             <p>Policy Tracker App by Isenewo Oluwaseyi</p>
