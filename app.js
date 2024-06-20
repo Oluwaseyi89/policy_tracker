@@ -1,23 +1,141 @@
-// import { PolicyStorage } from "./PolicyStorage";
+const STORAGE_SETTING = "storage-setting";
 
-let firebaseApp;
-let storeV;
-let auth;
-let collection;
-let addDoc;
-let doc;
-let signInWithEmailAndPassword;
-let createUserWithEmailAndPassword;
+let storedSetting = JSON.parse(localStorage.getItem(STORAGE_SETTING)) || null;
 
-
-
+let useLocalStorage = (storedSetting != null) && storedSetting.useLocalStorage;
 
 const currentContent = document.getElementById('current-content');
+
 let tabItems = document.getElementsByClassName('tab-item');
+
+let localStorageBtn = document.getElementById('local-storage-btn');
+let firebaseBtn = document.getElementById('firebase-btn');
+
+let searchInput = document.getElementById('search-input');
+let searchBtn = document.getElementById('search-btn');
+
+let localStoragePolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+let firebasePolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
+
+
+searchBtn.addEventListener('click', doSearch, false);
+
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key == 'Enter') doSearch();
+}, false);
+
+function doSearch () {
+    if(useLocalStorage) {
+        let searchedName = localStoragePolicies.policies.filter(item => item.holder_name.toLowerCase() == searchInput.value.toLowerCase());
+        let searchedPolicyNum = localStoragePolicies.policies.filter(item => item.policy_number == searchInput.value);
+
+        if(searchedName.length > 0) {
+            fillWithSearchResult(searchedName);
+        } else if (searchedPolicyNum.length > 0) {
+            fillWithSearchResult(searchedPolicyNum);
+        } else {
+            currentContent.innerHTML = "";
+            currentContent.innerHTML = `
+                <h3 class='no-result'>No results matched your searched parameter</h3>
+            `
+        }
+        
+    } else if (!useLocalStorage) {
+        let searchedName = firebasePolicies.policies.filter(item => item.holder_name.toLowerCase() == searchInput.value.toLowerCase());
+        let searchedPolicyNum = firebasePolicies.policies.filter(item => item.policy_number == searchInput.value);
+
+        if(searchedName.length > 0) {
+            fillWithSearchResult(searchedName);
+        } else if (searchedPolicyNum.length > 0) {
+            fillWithSearchResult(searchedPolicyNum);
+        } else {
+            currentContent.innerHTML = "";
+            currentContent.innerHTML = `
+                <h3 class='no-result'>No results matched your searched parameter</h3>
+            `
+        }
+
+    }
+    
+}
+
+
+
+let gearIcon = document.getElementById("gear-svg");
+let settingsPane = document.getElementById("settings-pane");
+let headerElem = document.getElementsByTagName("header")[0];
+
+headerElem.addEventListener('mouseleave', () => {
+    settingsPane.style.display = 'none';
+});
+
+let storeSettingDict = {
+    "useLocalStorage": true
+}
+
+window.addEventListener('load', () => {
+    if(storedSetting === null) {
+        localStorage.setItem(STORAGE_SETTING, JSON.stringify(storeSettingDict));
+    } else if (useLocalStorage) {
+        localStorageBtn.checked = true;
+        firebaseBtn.checked = false;
+    } else if (!useLocalStorage) {
+        firebaseBtn.checked = true;
+        localStorageBtn.checked = false;
+    }
+});
+
+
+localStorageBtn.addEventListener('click', () => {
+   if(!useLocalStorage) {
+    localStorageBtn.checked = true;
+    firebaseBtn.checked = false;
+    localStorage.setItem(STORAGE_SETTING, JSON.stringify({...storeSettingDict, "useLocalStorage": true}));
+    window.location.reload();
+} else if (useLocalStorage) {
+       localStorageBtn.checked = false;
+       firebaseBtn.checked = false;
+       localStorage.setItem(STORAGE_SETTING, JSON.stringify({...storeSettingDict, "useLocalStorage": false}));
+       window.location.reload();
+   }
+});
+
+firebaseBtn.addEventListener('click', () => {
+   if(useLocalStorage) {
+    localStorageBtn.checked = false;
+    firebaseBtn.checked = true;
+    localStorage.setItem(STORAGE_SETTING, JSON.stringify({...storeSettingDict, "useLocalStorage": false}));
+    window.location.reload();
+} else if (!useLocalStorage) {
+       localStorageBtn.checked = false;
+       firebaseBtn.checked = false;
+       localStorage.setItem(STORAGE_SETTING, JSON.stringify({...storeSettingDict, "useLocalStorage": true}));
+       window.location.reload();
+   }
+});
+
+
+
+gearIcon.addEventListener('mouseenter', () => {
+    gearIcon.style.fill = 'white';
+    settingsPane.style.display = 'block';
+});
+
+gearIcon.addEventListener('mouseleave', () => {
+    gearIcon.style.fill = 'orangered';
+});
+
+
+settingsPane.addEventListener('mouseenter', () => {
+    settingsPane.style.display = 'block';
+});
+
+settingsPane.addEventListener('mouseleave', () => {
+    settingsPane.style.display = 'none';
+});
 
 let searchLens = document.getElementsByClassName('fa-search')[0];
 
-let searchBtn = document.getElementById('search-btn');
 
 searchBtn.addEventListener('mouseenter', () => {
     searchLens.style.color = 'white';
@@ -207,8 +325,8 @@ currentContent.innerHTML = policyForm;
 
 
 function renderAllPolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
-    // let retrievedPolicies = JSON.parse(localStorage.getItem('firebase_policies')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = !useLocalStorage ? (JSON.parse(localStorage.getItem('firebase_policies')) || null) : (JSON.parse(localStorage.getItem('policy_store')) || null);
     
 
     let renderContainer = document.createElement("div");
@@ -248,7 +366,9 @@ function renderAllPolicies () {
 }
 
 function renderThisMonthPolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = !useLocalStorage ? (JSON.parse(localStorage.getItem('firebase_policies')) || null) : (JSON.parse(localStorage.getItem('policy_store')) || null);
+
 
     let dateObj = new Date().toISOString();
 
@@ -296,7 +416,9 @@ function renderThisMonthPolicies () {
 
 
 function renderNextMonthPolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = !useLocalStorage ? (JSON.parse(localStorage.getItem('firebase_policies')) || null) : (JSON.parse(localStorage.getItem('policy_store')) || null);
+
 
     let dateObj = new Date().toISOString();
 
@@ -347,7 +469,9 @@ function renderNextMonthPolicies () {
 
 
 function renderTwoMonthsTimePolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = !useLocalStorage ? (JSON.parse(localStorage.getItem('firebase_policies')) || null) : (JSON.parse(localStorage.getItem('policy_store')) || null);
+
 
     let dateObj = new Date().toISOString();
 
@@ -398,7 +522,9 @@ function renderTwoMonthsTimePolicies () {
 
 
 function renderThreeMonthsTimePolicies () {
-    let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    // let retrievedPolicies = JSON.parse(localStorage.getItem('policy_store')) || null;
+    let retrievedPolicies = !useLocalStorage ? (JSON.parse(localStorage.getItem('firebase_policies')) || null) : (JSON.parse(localStorage.getItem('policy_store')) || null);
+
 
     let dateObj = new Date().toISOString();
 
@@ -488,4 +614,48 @@ function showAlertView(shouldShow, title, message) {
 
 
         }
+}
+
+
+function fillWithSearchResult (searchArray) { 
+ 
+     let renderContainer = document.createElement("div");
+ 
+     if(searchArray.length > 0) {
+         currentContent.innerHTML = "";
+         renderContainer.style.paddingTop = '30px';
+         renderContainer.style.paddingLeft = '30px';
+         renderContainer.style.paddingRight = '30px';
+         renderContainer.style.display = 'flex';
+         renderContainer.style.flexDirection = 'row';
+         renderContainer.style.flexWrap = 'wrap';
+         renderContainer.style.justifyContent = 'space-between';
+         renderContainer.style.alignItems = 'flex-start';
+         renderContainer.style.zIndex = '-1';
+         let sortedPolicies = searchArray.sort((a, b) => {
+             let nameA = a.holder_name.toLowerCase();
+             let nameB = b.holder_name.toLowerCase();
+             if(nameA < nameB) return -1;
+             if(nameA > nameB) return 1;
+             return 0;
+         });
+         sortedPolicies.forEach(item => {
+             renderContainer.innerHTML += `<div class='policy-item'>
+             <p><strong>Policy Holder</strong>: ${item.holder_name}</p>                
+             <p><strong>Policy Number</strong>: ${item.policy_number}</p>                
+             <p><strong>Policy Class</strong>: ${item.policy_class}</p>                
+             <p><strong>Policy Sub-Class</strong>: ${item.policy_sub_class}</p>                
+             <p><strong>Policy Date</strong>: ${item.policy_date}</p>                
+             <p><strong>Premium Paid</strong>: NGN ${item.premium_paid}</p>                
+             </div>`;
+         });
+ 
+         currentContent.appendChild(renderContainer);
+     } else {
+        currentContent.innerHTML = "";
+        currentContent.innerHTML = `
+            <h3 class='no-result'>No results matched your searched parameter</h3>
+        `
+     }
+ 
 }
