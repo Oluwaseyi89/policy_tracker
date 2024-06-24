@@ -1,4 +1,7 @@
 const STORAGE_SETTING = "storage-setting";
+const CURRENT_TAB = "current-tab";
+
+const tabInfo = JSON.parse(localStorage.getItem(CURRENT_TAB)) || null;
 
 let storedSetting = JSON.parse(localStorage.getItem(STORAGE_SETTING)) || null;
 
@@ -19,6 +22,17 @@ let firebasePolicies = JSON.parse(localStorage.getItem('firebase_policies')) || 
 
 
 searchBtn.addEventListener('click', doSearch, false);
+
+const tabsDict = {
+    "register": false,
+    "all-policies": false,
+    "this-month": true,
+    "next-month": false,
+    "two-months": false,
+    "three-months": false,
+}
+
+
 
 searchInput.addEventListener('keypress', (e) => {
     if (e.key == 'Enter') doSearch();
@@ -74,6 +88,7 @@ let storeSettingDict = {
 }
 
 window.addEventListener('load', () => {
+  
     if(storedSetting === null) {
         localStorage.setItem(STORAGE_SETTING, JSON.stringify(storeSettingDict));
     } else if (useLocalStorage) {
@@ -83,7 +98,24 @@ window.addEventListener('load', () => {
         firebaseBtn.checked = true;
         localStorageBtn.checked = false;
     }
+
+    // if(tabInfo == null) {
+    //     localStorage.setItem(CURRENT_TAB, JSON.stringify(tabsDict));
+    // } else {
+    //     let values = Object.values(tabInfo);
+            
+    //     values.forEach((item, index) => {
+    //         if (item == true) {
+    //             console.log(index);
+    //             getCurrentTab(index);
+    //         }
+    //     });
+    // }
+
+
 });
+
+
 
 
 localStorageBtn.addEventListener('click', () => {
@@ -181,82 +213,36 @@ let policyForm = `
 `;
 
 
-let thisMonth = `
-    <h3>These are all the policies due for renewal this month</h3>
-`;
-
-let nextMonth = `
-    <h3>These are all the policies due for renewal next month</h3>
-`;
-
-let twoMonthsTime = `
-    <h3>These are all the policies due for renewal in 2 months time</h3>
-`;
-
-let threeMonthsTime = `
-    <h3>These are all the policies due for renewal in 3 months time</h3>
-`;
-
-
-function updateTabs () {
-    Array.from(tabItems).forEach(tabItem => {
-        if (tabItem.getAttribute("data-state") == "true") {
-            tabItem.style.backgroundColor = 'orangered';
-            tabItem.style.border = 'solid 1px orangered';
-            tabItem.style.color = 'white';
-        } else {
-            // alert(tabItem.getAttribute("data-state"));
-            tabItem.style.backgroundColor = 'white';
-            tabItem.style.border = 'solid 2px orange';
-            tabItem.style.borderLeft = 'solid 1px orange';
-            tabItem.style.color = 'orange';
-        }
-    });
-}
-
-
-
-
-
-
-
-Array.from(tabItems).forEach(tabItem => {
-    let tabContent = tabItem.innerHTML;
-
+Array.from(tabItems).forEach((tabItem, index) => {
+   
     tabItem.addEventListener('click', () => {
 
-        tabItem.setAttribute("data-state", "true");
-        updateTabs();
-
-        switch(tabContent) {
-            case 'Register Policy': currentContent.innerHTML = policyForm;
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
+        switch(index) {
+            case 0 : renderRegister();
+            // setTabByIndex(0);
+            getCurrentTab(0);
             break;
-            case 'All Policies': renderAllPolicies();
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
+            case 1: renderAllPolicies();
+            // setTabByIndex(1);
+             getCurrentTab(1);
             break;
-            case 'This Month': renderThisMonthPolicies();
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
+            case 2: renderThisMonthPolicies();
+            // setTabByIndex(2);
+             getCurrentTab(2);
             break;
-            case 'Next Month': renderNextMonthPolicies();
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
+            case 3: renderNextMonthPolicies();
+            // setTabByIndex(3);
+             getCurrentTab(3);
             break;
-            case '2-Months-Time': renderTwoMonthsTimePolicies();
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
+            case 4: renderTwoMonthsTimePolicies();
+            // setTabByIndex(4);
+             getCurrentTab(4);
             break;
-            case '3-Months-Time': renderThreeMonthsTimePolicies();
-            tabItem.setAttribute("data-state", "true");
-            updateTabs();
-            
+            case 5: renderThreeMonthsTimePolicies();
+            // setTabByIndex(5);
+             getCurrentTab(5);            
             break;
-            default: currentContent.innerHTML = policyForm;
-            tabItem.setAttribute("data-state", "false");
-            updateTabs();
+            default: setCurrentContentNull();        
             
         }
     });
@@ -267,60 +253,14 @@ Array.from(tabItems).forEach(tabItem => {
 
 currentContent.innerHTML = policyForm;
 
-// let submitPolicyBtn = document.getElementById('policy-save-btn');
+function renderRegister() {
+    currentContent.innerHTML = "";
+    currentContent.innerHTML = policyForm;
+} 
 
-
-// submitPolicyBtn.addEventListener('click', (e) => {
-//     e.preventDefault();
-
-//     let holderName = document.getElementById('holder-name');
-// let policyNumber = document.getElementById('policy-number');
-// let clientType = document.getElementById('client-type');
-// let policyDate = document.getElementById('policy-date');
-// let policyClass = document.getElementById('policy-class');
-// let policySubClass = document.getElementById('policy-sub-class');
-// let paymentMode = document.getElementById('payment-mode');
-// let premiumPaid = document.getElementById('premium-paid');
-
-// let policyToSave = {
-//     "id": "",
-//     "holder_name": holderName.value,
-//     "policy_number": policyNumber.value,
-//     "client_type": clientType.value,
-//     "policy_date": policyDate.value,
-//     "policy_class": policyClass.value,
-//     "policy_sub_class": policySubClass.value,
-//     "payment_mode": paymentMode.value,
-//     "premium_paid": premiumPaid.value
-// }
-
-//     if(holderName.value && policyNumber.value && clientType.value && policyDate.value && policyClass.value && policySubClass.value && paymentMode.value && premiumPaid.value) {
-
-//         console.log(policyToSave);
-//         PolicyStorage.save(policyToSave).then(res => {
-//             if(res.status === "success") {
-//                 showAlertView(true, "Success!", res.data);
-//                 } else if(res.status === "error") {
-//                     showAlertView(true, "Error!", res.data);
-//             }           
-//         }).catch(err => showAlertView(true, "Error!", err.message));
-//     } else {
-//         showAlertView(true, "Incomplete Data!", "Fill all available fields!");
-//     }
-// });
-
-
-// submitPolicyBtn.addEventListener('mouseenter', () => {
-//     submitPolicyBtn.style.backgroundColor = 'orangered';
-//     submitPolicyBtn.style.transition = '0.7s';
-    
-// });
-
-// submitPolicyBtn.addEventListener('mouseleave', () => {
-//     submitPolicyBtn.style.backgroundColor = 'orange';
-//     submitPolicyBtn.style.transition = '0.7s';
-
-// });
+function setCurrentContentNull () {
+    currentContent.innerHTML = "";
+}
 
 
 
@@ -573,48 +513,6 @@ function renderThreeMonthsTimePolicies () {
 
 }
 
-function showAlertView(shouldShow, title, message) {
-    let alertElement = document.createElement("div");
-    let titleElement = document.createElement("h4");
-    let messageElement = document.createElement("p");
-
-    titleElement.innerHTML = title;
-    messageElement.innerHTML = message;
-
-    titleElement.style.textAlign = 'center';
-    titleElement.style.marginTop = '15px';
-    titleElement.style.fontFamily = 'Sans-Serif';
-    titleElement.style.color = 'orangered';
-
-    messageElement.style.textAlign = 'justify';
-    messageElement.style.paddingLeft = '15px';
-    messageElement.style.marginTop= '20px';
-    messageElement.style.fontFamily= 'Helvetica';
-
-
-    alertElement.style.height = "250px";
-    alertElement.style.width = "450px";
-    alertElement.style.borderRadius = "15px";
-    
-    alertElement.style.backgroundColor = "#F8F6F0";
-    alertElement.style.border = "solid silver 1px";
-    alertElement.style.boxShadow = "2px 2px 4px 2px silver";
-    
-    if(shouldShow) {
-        currentContent.appendChild(alertElement);
-        alertElement.style.position = "fixed";
-        alertElement.style.marginTop = "-600px";
-        alertElement.style.marginLeft = `calc((100vw - 450px)/2)`;
-        alertElement.appendChild(titleElement);
-        alertElement.appendChild(messageElement);
-
-        setTimeout(() => {
-            currentContent.removeChild(alertElement);
-        }, 5000);
-
-
-        }
-}
 
 
 function fillWithSearchResult (searchArray) { 
@@ -658,4 +556,105 @@ function fillWithSearchResult (searchArray) {
         `
      }
  
+}
+
+function getCurrentTab(index) {
+
+    Array.from(tabItems).forEach((item, idx) => {
+        if(idx == index) {
+            item.style.backgroundColor = 'orangered';
+            item.style.color = 'white';
+            item.style.border = 'solid white 2px';
+
+            switch (idx) {
+                case 0: renderRegister();
+                break;
+                case 1: renderAllPolicies();
+                break;
+                case 2: renderThisMonthPolicies();
+                break;
+                case 3: renderNextMonthPolicies();
+                break;
+                case 4: renderTwoMonthsTimePolicies();
+                break;
+                case 5: renderThreeMonthsTimePolicies();
+                break;
+                default: setCurrentContentNull();
+            }
+        } else {
+            item.style.backgroundColor = 'white';
+            item.style.color = 'orange';
+            item.style.border = 'solid orange 2px';
+        }
+    });
+}
+
+// function refresh () {
+//     // window.location.href = '/';
+//     window.location.reload();
+// }
+
+// function setTabByIndex (index) {
+//     let keys = Object.keys(tabsDict);
+//     let values = Object.values(tabsDict);
+
+//     let modValues = values.map((item, idx) => {
+//         if(idx == index) {
+//             item = true;
+//             return item;
+//         } else {
+//             item = false;
+//             return item;
+//         }
+//     });
+
+//    let newTabDict = {};
+
+//    keys.forEach((key, index) => {
+//     newTabDict[key] = modValues[index];
+//    });
+
+//    localStorage.setItem(CURRENT_TAB, JSON.stringify(newTabDict));
+// //    refresh();
+// }
+
+function showAlertView(shouldShow, title, message) {
+    let alertElement = document.createElement("div");
+    let titleElement = document.createElement("h4");
+    let messageElement = document.createElement("p");
+
+    titleElement.innerHTML = title;
+    messageElement.innerHTML = message;
+
+    titleElement.style.textAlign = 'center';
+    titleElement.style.marginTop = '15px';
+    titleElement.style.fontFamily = 'Sans-Serif';
+    titleElement.style.color = 'orangered';
+
+    messageElement.style.textAlign = 'justify';
+    messageElement.style.paddingLeft = '15px';
+    messageElement.style.marginTop= '20px';
+    messageElement.style.fontFamily= 'Helvetica';
+
+
+    alertElement.style.height = "250px";
+    alertElement.style.width = "450px";
+    alertElement.style.borderRadius = "15px";
+    
+    alertElement.style.backgroundColor = "#F8F6F0";
+    alertElement.style.border = "solid silver 1px";
+    alertElement.style.boxShadow = "2px 2px 4px 2px silver";
+    
+    if(shouldShow) {
+        currentContent.appendChild(alertElement);
+        alertElement.style.position = "fixed";
+        alertElement.style.marginTop = "-600px";
+        alertElement.style.marginLeft = `calc((100vw - 450px)/2)`;
+        alertElement.appendChild(titleElement);
+        alertElement.appendChild(messageElement);
+
+            setTimeout(() => {
+                currentContent.removeChild(alertElement);
+            }, 5000);
+        }
 }
