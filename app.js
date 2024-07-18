@@ -3,6 +3,22 @@ const CURRENT_TAB = "current-tab";
 
 const tabInfo = JSON.parse(localStorage.getItem(CURRENT_TAB)) || null;
 
+const lowerHeader = document.getElementById('lower-header');
+
+const closeBtn = document.getElementById('close-btn');
+
+const menuBtn = document.getElementById('menu');
+
+const mobViewSettings = document.getElementById('mob-view-settings');
+
+closeBtn.addEventListener('click', () => {
+    lowerHeader.style.display = 'none';
+});
+
+menuBtn.addEventListener('click', () => {
+    lowerHeader.style.display = 'flex';
+});
+
 let storedSetting = JSON.parse(localStorage.getItem(STORAGE_SETTING)) || null;
 
 let useLocalStorage = (storedSetting != null) && storedSetting.useLocalStorage;
@@ -22,6 +38,8 @@ let firebasePolicies = JSON.parse(localStorage.getItem('firebase_policies')) || 
 
 
 searchBtn.addEventListener('click', doSearch, false);
+
+// console.log(window.innerWidth);
 
 const tabsDict = {
     "register": false,
@@ -99,6 +117,9 @@ window.addEventListener('load', () => {
         localStorageBtn.checked = false;
     }
 
+
+    // if (window.innerWidth < 1000) alert("It is a small frame");
+
     // if(tabInfo == null) {
     //     localStorage.setItem(CURRENT_TAB, JSON.stringify(tabsDict));
     // } else {
@@ -113,6 +134,11 @@ window.addEventListener('load', () => {
     // }
 
 
+});
+
+mobViewSettings.addEventListener('click', () => {
+    settingsPane.style.display = 'block';
+    lowerHeader.style.display = 'none';
 });
 
 
@@ -522,6 +548,7 @@ function fillWithSearchResult (searchArray) {
      if(searchArray.length > 0) {
          currentContent.innerHTML = "";
          renderContainer.style.paddingTop = '30px';
+         renderContainer.style.width = window.innerWidth;
          renderContainer.style.paddingLeft = '30px';
          renderContainer.style.paddingRight = '30px';
          renderContainer.style.display = 'flex';
@@ -562,9 +589,16 @@ function getCurrentTab(index) {
 
     Array.from(tabItems).forEach((item, idx) => {
         if(idx == index) {
-            item.style.backgroundColor = 'orangered';
-            item.style.color = 'white';
-            item.style.border = 'solid white 2px';
+            if(window.innerWidth > 1024) {
+                item.style.backgroundColor = 'orangered';
+                item.style.color = 'white';
+                item.style.border = 'solid white 2px';
+            } else {
+                item.style.backgroundColor = 'transparent';
+                item.style.color = 'white';
+                // item.style.border = 'none';
+                item.style.borderBottom = 'white';
+            }
 
             switch (idx) {
                 case 0: renderRegister();
@@ -582,9 +616,16 @@ function getCurrentTab(index) {
                 default: setCurrentContentNull();
             }
         } else {
-            item.style.backgroundColor = 'white';
-            item.style.color = 'orange';
-            item.style.border = 'solid orange 2px';
+            if (window.innerWidth > 1024) {
+                item.style.backgroundColor = 'white';
+                item.style.color = 'orange';
+                item.style.border = 'solid orange 2px';
+            } else {
+                item.style.backgroundColor = 'transparent';
+                item.style.color = 'white';
+                // item.style.border = 'none';
+                item.style.borderBottom = 'white';
+            }
         }
     });
 }
